@@ -2,6 +2,7 @@ package ehdotus;
 
 import au.com.bytecode.opencsv.CSVReader;
 import ehdotus.domain.DifficultyData;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 public class DataServer {
 
     @Value("${data.file}")
-    private String datafile;
+    private Resource resource;
     private RestTemplate restTemplate;
     private Map<String, Integer> biggestAssignmentSubmitted;
 
@@ -64,7 +66,7 @@ public class DataServer {
     private String[] getEntry() throws FileNotFoundException, IOException {
         // TODO: get up-to-date content
 
-        CSVReader reader = new CSVReader(new InputStreamReader(DataServer.class.getResource(datafile).openStream()));
+        CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(resource.getInputStream())), ';');
         List<String[]> content = reader.readAll();
         return content.get(1 + new Random().nextInt(content.size() - 1));
     }
