@@ -3,8 +3,8 @@ package ehdotus;
 import au.com.bytecode.opencsv.CSVReader;
 import ehdotus.domain.DifficultyData;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -46,6 +46,7 @@ public class DataServer {
                 restTemplate.postForObject("http://ehdotus.herokuapp.com/difficulty", d, String.class);
 
             } catch (Throwable t) {
+                t.printStackTrace();
                 continue;
             }
 
@@ -62,7 +63,8 @@ public class DataServer {
 
     private String[] getEntry() throws FileNotFoundException, IOException {
         // TODO: get up-to-date content
-        CSVReader reader = new CSVReader(new FileReader(datafile), ';');
+
+        CSVReader reader = new CSVReader(new InputStreamReader(DataServer.class.getResource(datafile).openStream()));
         List<String[]> content = reader.readAll();
         return content.get(1 + new Random().nextInt(content.size() - 1));
     }
